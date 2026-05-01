@@ -26,4 +26,17 @@ const router = createRouter({
   ],
 })
 
+import { getCurrentUser } from 'aws-amplify/auth';
+
+router.beforeEach(async (to, from) => {
+  if (to.name === 'about') {
+    try {
+      await getCurrentUser(); // 檢查是否有 Session
+      return true;
+    } catch (e) {
+      return { name: 'login' }; // 沒登入就踢回登入頁
+    }
+  }
+});
+
 export default router

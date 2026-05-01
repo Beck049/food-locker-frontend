@@ -1,6 +1,24 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/templateComponent/HelloWorld.vue'
+
+import { Hub } from 'aws-amplify/utils';
+
+// 監聽 auth 頻道
+Hub.listen('auth', ({ payload }) => {
+  switch (payload.event) {
+    case 'signedIn':
+      console.log('使用者已登入！');
+      // 這裡可以做跳轉，例如：router.push('/dashboard')
+      break;
+    case 'signedOut':
+      console.log('使用者已登出');
+      break;
+    case 'tokenRefresh_failure':
+      console.log('Token 刷新失敗，可能需要重新登入');
+      break;
+  }
+});
 </script>
 
 <template>

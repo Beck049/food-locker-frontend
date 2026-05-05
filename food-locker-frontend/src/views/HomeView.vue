@@ -19,7 +19,7 @@ const { user, authStatus } = toRefs(auth);
 
         <!-- 情況 B：已登入 -->
         <div v-else-if="authStatus === 'authenticated'">
-          <h1>這是會員專屬的 About 頁面</h1>
+          <h1>這是會員專屬的 Home 頁面</h1>
           <p>歡迎回來，{{ user.signInDetails?.loginId }}！</p>
           <button @click="auth.signOut">登出</button>
         </div>

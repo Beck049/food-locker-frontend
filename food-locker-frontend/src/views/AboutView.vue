@@ -35,20 +35,6 @@ async function fetchLockersByLocation(location: string) {
     gridLoading.value = false;
   }
 }
-
-async function unlockLocker(locker: Locker) {
-  try {
-    const unlockUrl = `${apiUrl}/${selectedLocation.value}/${locker.id}/unlock`;
-    const response = await fetch(unlockUrl, { method: 'POST' });
-    if (!response.ok) {
-      throw new Error(`API 回傳錯誤：${response.status} ${response.statusText}`);
-    }
-
-    locker.status = 'Occupy';
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : String(err);
-  }
-}
 </script>
 
 <template>
@@ -76,7 +62,7 @@ async function unlockLocker(locker: Locker) {
       <LockerGrid
         v-if="!gridLoading && !error && gridData.length"
         :grid="gridData"
-        @unlock="unlockLocker"
+        :location="selectedLocation"
       />
 
       <p v-if="selectedLocation && !gridLoading && !gridData.length">

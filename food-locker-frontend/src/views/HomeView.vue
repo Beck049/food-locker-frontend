@@ -89,13 +89,11 @@ watch(authStatus, (newStatus) => {
 
         <!-- 情況 B：已登入 -->
         <div v-else-if="authStatus === 'authenticated'">
-          <h1>這是會員專屬的 Home 頁面</h1>
           <p>歡迎回來，{{ user.signInDetails?.loginId }}！</p>
           <button @click="auth.signOut">登出</button>
 
           <section class="lockers-data">
-            <h2>儲物櫃資料</h2>
-            <p class="hint">API: {{ apiUrl }}</p>
+            <h1>儲物櫃管理</h1>
 
             <p v-if="isLoading">載入中，請稍候...</p>
             <p v-if="error" class="error">讀取失敗：{{ error }}</p>
@@ -140,7 +138,7 @@ watch(authStatus, (newStatus) => {
               </div>
             </div>
 
-            <p v-else-if="!isLoading && !error">目前沒有可顯示的儲物櫃資料。</p>
+            <p v-else-if="!isLoading && !lockers.length && !error">目前沒有可顯示的儲物櫃資料。</p>
           </section>
         </div>
 
@@ -156,11 +154,17 @@ watch(authStatus, (newStatus) => {
 </template>
 
 <style scoped>
+h1 {
+  font-size: 2rem;
+  color: #111827;
+  margin-bottom: 2rem;
+}
+
 .unlock-btn {
   border: 1px solid #2563eb;
   background: #2563eb;
   color: #fff;
-  padding: 0.55rem 0.95rem;
+  padding: 0.55rem 0.55rem;
   border-radius: 0.75rem;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
@@ -206,8 +210,43 @@ watch(authStatus, (newStatus) => {
   border: 0;
   background: #2563eb;
   color: #fff;
-  padding: 0.75rem 1.25rem;
+  padding: 0.75rem 0.75rem;
   border-radius: 0.75rem;
   cursor: pointer;
+}
+
+.lockers-data table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #d1d5db;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  margin-top: 1rem;
+  background: #ffffff;
+}
+
+.lockers-data th,
+.lockers-data td {
+  padding: 0.95rem 1rem;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+
+.lockers-data thead th {
+  background: #eef2ff;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.lockers-data tbody tr:nth-child(odd) {
+  background: #f8fafc;
+}
+
+.lockers-data tbody tr:hover {
+  background: #e0f2fe;
+}
+
+.lockers-data td button {
+  min-width: 84px;
 }
 </style>

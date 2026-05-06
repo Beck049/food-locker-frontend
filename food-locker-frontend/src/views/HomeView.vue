@@ -152,7 +152,6 @@ watch(authStatus, (newStatus) => {
           <router-link to="/login">前往登入</router-link>
         </div>
       </div>
-    <TheWelcome />
   </main>
 </template>
 

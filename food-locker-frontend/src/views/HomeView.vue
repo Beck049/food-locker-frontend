@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import { useAuthenticator } from '@aws-amplify/ui-vue';
+import { fetchAuthSession } from 'aws-amplify/auth';
 import { computed, onMounted, ref, toRefs, watch } from 'vue';
 
 interface Locker {
@@ -26,12 +27,26 @@ const modalIsLoading = ref(false);
 const apiStage = import.meta.env.VITE_API_STAGE ?? 'front-dev';
 const apiUrl = `https://yiqe9ak6xi.execute-api.ap-northeast-1.amazonaws.com/${apiStage}/lockers`;
 
+/**
+ * 取得最新的 ID Token 並包裝成 Header
+ */
+async function getAuthHeaders() {
+  const session = await fetchAuthSession();
+  const token = session.tokens?.idToken?.toString();
+  
+  return {
+    'Authorization': token ? `Bearer ${token}` : '',
+    'Content-Type': 'application/json'
+  };
+}
+
 async function fetchLockers() {
   isLoading.value = true;
   error.value = null;
 
   try {
-    const response = await fetch(apiUrl, { method: 'GET' });
+    const headers = await getAuthHeaders();
+    const response = await fetch(apiUrl, { method: 'GET', headers });
     if (!response.ok) {
       throw new Error(`API 回傳錯誤：${response.status} ${response.statusText}`);
     }
@@ -52,7 +67,9 @@ async function unlockLocker(locker: Locker) {
 
   try {
     const unlockUrl = `${apiUrl}/${encodeURIComponent(locker.location)}/${locker.number}/unlock`;
-    const response = await fetch(unlockUrl, { method: 'POST' });
+    const headers = await getAuthHeaders();
+    const response = await fetch(unlockUrl, { method: 'POST', headers });
+
     if (!response.ok) {
       throw new Error(`API 回傳錯誤：${response.status} ${response.statusText}`);
     }

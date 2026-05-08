@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 interface Locker {
   id: string | number;
@@ -20,6 +21,7 @@ const isConfirming = ref(false);
 const targetLocker = ref<Locker | null>(null);
 const remainingTime = ref(300);
 let countdownTimer: number | null = null;
+let arn = '';
 
 const apiStage = import.meta.env.VITE_API_STAGE ?? 'front-dev';
 const apiUrl = `https://yiqe9ak6xi.execute-api.ap-northeast-1.amazonaws.com/${apiStage}/lockers`;
@@ -57,17 +59,22 @@ async function openConfirmModal(locker: Locker) {
 
   try {
     const startBookingUrl = `${apiUrl}/${props.location}/${parseInt(String(locker.id))}/start-booking`;
-    const response = await fetch(startBookingUrl, { method: 'POST' });
+    const headers = await getAuthHeaders();
+    const response = await fetch(startBookingUrl, { method: 'POST', headers });
     if (!response.ok) {
       throw new Error(`API 回傳錯誤：${response.status} ${response.statusText}`);
     }
 
     const data = (await response.json()) as {
-      success: boolean;
-      executionArn: string;
-      status: string;
-      message: string;
+        success: boolean;
+        message: string;
+        data: {
+            executionArn: string;
+            status: string;
+        }
     };
+    arn = data.data.executionArn;
+    console.log('Received ARN:', arn);
 
     if (data.success) {
       isConfirming.value = true;
@@ -83,6 +90,19 @@ async function openConfirmModal(locker: Locker) {
   }
 }
 
+/**
+ * 取得最新的 ID Token 並包裝成 Header
+ */
+async function getAuthHeaders() {
+  const session = await fetchAuthSession();
+  const token = session.tokens?.idToken?.toString();
+  
+  return {
+    'Authorization': token ? `Bearer ${token}` : '',
+    'Content-Type': 'application/json'
+  };
+}
+
 async function executeBooking() {
   if (!targetLocker.value) return;
   const locker = targetLocker.value;
@@ -94,16 +114,19 @@ async function executeBooking() {
 
   try {
     const execBookingUrl = `${apiUrl}/${props.location}/${parseInt(String(locker.id))}/exec-booking`;
-    const response = await fetch(execBookingUrl, { method: 'POST' });
+    const headers = await getAuthHeaders();
+    const body = JSON.stringify({ executionArn: arn });
+    const response = await fetch(execBookingUrl, { method: 'POST', headers, body });
     if (!response.ok) {
       throw new Error(`API 回傳錯誤：${response.status} ${response.statusText}`);
     }
 
     const data = (await response.json()) as {
       success: boolean;
-      executionArn: string;
-      status: string;
       message: string;
+      data: {
+        final_status: string;
+      };
     };
 
     if (data.success) {
@@ -124,13 +147,18 @@ function closeModal() {
   modalVisible.value = false;
   targetLocker.value = null;
   isConfirming.value = false;
+  window.location.reload();
 }
 
 function getStatusClass(status: string) {
   switch (status.toLowerCase()) {
     case 'available':
       return 'available';
-    case 'occupy':
+    case 'occupied':
+      return 'occupy';
+    case 'softlocked':
+      return 'occupy';
+    case 'reserved':
       return 'occupy';
     case 'error':
       return 'error';

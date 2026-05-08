@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LockerGrid from '../components/LockerGrid.vue';
+import { fetchAuthSession } from 'aws-amplify/auth';
 import { ref } from 'vue';
 
 interface Locker {
@@ -13,22 +14,36 @@ const selectedLocation = ref<string>('');
 const gridData = ref<GridRow[]>([]);
 const gridLoading = ref(false);
 const error = ref<string | null>(null);
-const locations = ['test', 'demo'];
+const locations = ['NTHU', 'test', 'demo'];
 const apiStage = import.meta.env.VITE_API_STAGE ?? 'front-dev';
 const apiUrl = `https://yiqe9ak6xi.execute-api.ap-northeast-1.amazonaws.com/${apiStage}/lockers`;
+
+/**
+ * 取得最新的 ID Token 並包裝成 Header
+ */
+async function getAuthHeaders() {
+  const session = await fetchAuthSession();
+  const token = session.tokens?.idToken?.toString();
+  
+  return {
+    'Authorization': token ? `Bearer ${token}` : '',
+    'Content-Type': 'application/json'
+  };
+}
 
 async function fetchLockersByLocation(location: string) {
   gridLoading.value = true;
   error.value = null;
   try {
     const locationUrl = `${apiUrl}/${encodeURIComponent(location)}`;
-    const response = await fetch(locationUrl, { method: 'GET' });
+    const headers = await getAuthHeaders();
+    const response = await fetch(locationUrl, { method: 'GET', headers });
     if (!response.ok) {
       throw new Error(`API 回傳錯誤：${response.status} ${response.statusText}`);
     }
 
-    const data = (await response.json()) as { Grid: GridRow[] };
-    gridData.value = data.Grid ?? [];
+    const data = (await response.json()) as { data: { Grid: GridRow[] } };
+    gridData.value = data.data.Grid ?? [];
   } catch (err) {
     error.value = err instanceof Error ? err.message : String(err);
   } finally {

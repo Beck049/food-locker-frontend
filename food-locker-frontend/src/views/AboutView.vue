@@ -153,4 +153,33 @@ async function fetchLockersByLocation(location: string) {
     justify-content: center;
   }
 }
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .about h1 {
+    color: #f3f4f6;
+  }
+  .location-selector {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  .dropdown-wrapper label {
+    color: #d1d5db;
+  }
+  .dropdown-wrapper select {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f3f4f6;
+  }
+  .dropdown-wrapper select:hover {
+    border-color: #60a5fa;
+  }
+  .dropdown-wrapper select:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+  }
+  .error {
+    color: #f87171;
+  }
+}
 </style>

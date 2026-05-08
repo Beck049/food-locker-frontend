@@ -88,4 +88,23 @@ const formFields = {
 .signout-btn:hover {
   background-color: #ff7875;
 }
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .welcome-container {
+    background: #1f2937;
+    color: #f3f4f6;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  }
+  .user-card {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  .signout-btn {
+    background-color: #dc2626;
+  }
+  .signout-btn:hover {
+    background-color: #ef4444;
+  }
+}
 </style>

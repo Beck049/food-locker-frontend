@@ -265,4 +265,41 @@ h1 {
 .lockers-data td button {
   min-width: 84px;
 }
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  h1 {
+    color: #f3f4f6;
+  }
+  .modal-card {
+    background: #1f2937;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+  .modal-card p {
+    color: #f3f4f6;
+  }
+  .lockers-data table {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  .lockers-data th,
+  .lockers-data td {
+    border-color: #374151;
+  }
+  .lockers-data thead th {
+    background: #111827;
+    color: #60a5fa;
+  }
+  .lockers-data tbody tr:nth-child(odd) {
+    background: #1f2937;
+  }
+  .lockers-data tbody tr:hover {
+    background: #374151;
+  }
+  .unlock-btn:disabled {
+    background: #4b5563;
+    border-color: #4b5563;
+    color: #9ca3af;
+  }
+}
 </style>

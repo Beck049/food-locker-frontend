@@ -332,4 +332,31 @@ function getStatusClass(status: string) {
 .cancel-btn:hover {
   background: #d1d5db;
 }
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .locker-row {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  .locker-btn.occupy {
+    background: #4b5563;
+    border-color: #4b5563;
+    color: #9ca3af;
+  }
+  .modal-card {
+    background: #1f2937;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+  .modal-card p {
+    color: #f3f4f6;
+  }
+  .cancel-btn {
+    background: #374151;
+    color: #d1d5db;
+  }
+  .cancel-btn:hover {
+    background: #4b5563;
+  }
+}
 </style>

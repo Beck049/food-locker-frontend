@@ -52,7 +52,7 @@ async function fetchLockers() {
     }
 
     const data = (await response.json()) as { lockers: Locker[] };
-    lockers.value = (data.lockers ?? []).map((locker) => ({ ...locker, unlocked: false }));
+    lockers.value = (data.data.lockers ?? []).map((locker) => ({ ...locker, unlocked: false }));
   } catch (err) {
     error.value = err instanceof Error ? err.message : String(err);
   } finally {

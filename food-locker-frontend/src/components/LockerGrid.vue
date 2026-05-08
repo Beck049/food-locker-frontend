@@ -27,7 +27,7 @@ const apiStage = import.meta.env.VITE_API_STAGE ?? 'front-dev';
 const apiUrl = `https://yiqe9ak6xi.execute-api.ap-northeast-1.amazonaws.com/${apiStage}/lockers`;
 
 function startCountdown() {
-  remainingTime.value = 300;
+  remainingTime.value = 20;
   if (countdownTimer) clearInterval(countdownTimer);
   
   countdownTimer = window.setInterval(() => {
